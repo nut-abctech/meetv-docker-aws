@@ -1,0 +1,9 @@
+deb http://http.debian.net/debian wheezy main
+deb http://http.debian.net/debian wheezy-updates main
+deb http://security.debian.org wheezy/updates main
+#startsiden
+deb http://wheezyaptbuilder-dev.startsiden.no/ wheezy main contrib non-free
+
+#nginx
+deb http://dotdeb.netmirror.org/ stable all
+deb-src http://dotdeb.netmirror.org/ stable all

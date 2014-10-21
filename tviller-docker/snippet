@@ -1,0 +1,23 @@
+
+# Install startsiden nodejs
+RUN apt-get install -y --force-yes python g++ startsiden-nodejs
+
+# Install mongodb
+RUN mkdir -p /home/db && touch /home/db/mongodb.log
+RUN apt-get install -y --force-yes mongodb-server
+WORKDIR /home
+EXEC mongod --fork --logpath /home/db/mongodb.log --port 12345 --dbpath /home/db --pidfilepath /home/db/mongod.pid --smallfiles
+
+
+# Install Redis
+RUN wget http://download.redis.io/releases/redis-2.8.17.tar.gz
+RUN tar xzf redis-2.8.17.tar.gz && cd redis-2.8.17
+RUN make 
+
+# Install Node public apps
+RUN npm install pm2 -g
+
+
+# Get Tviller chat debian package and install
+
+EXPOSE 8888
