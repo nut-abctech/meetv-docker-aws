@@ -9,7 +9,7 @@ FROM tutum/debian:wheezy
 MAINTAINER nut@abctech-thailand.com
 
 # Add the application resources URL®
-ADD ./source.list /etc/apt/sources.list
+COPY ./sources.list /etc/apt/
 RUN apt-get update
 
 # Install basic applications
@@ -27,6 +27,9 @@ RUN apt-get -y --force-yes install nginx
 
 WORKDIR /var/www/tviller-server
 COPY ./run.sh /var/www/tviller-server/
+
+COPY tviller-server.conf /etc/nginx/sites-available/
+RUN rm /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/tviller-server.conf /etc/nginx/sites-enabled/tviller-server 
 
 CMD ["/run.sh"]
 
