@@ -27,11 +27,14 @@ RUN apt-get -y --force-yes install nginx
 
 WORKDIR /var/www/tviller-server
 COPY ./run.sh /var/www/tviller-server/
+RUN chmod 755 ./run.sh
 
 COPY tviller-server.conf /etc/nginx/sites-available/
 RUN rm /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/tviller-server.conf /etc/nginx/sites-enabled/tviller-server 
 
-CMD ["/run.sh"]
+EXPOSE 8088
+
+CMD ["/bin/bash", "./run.sh"]
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

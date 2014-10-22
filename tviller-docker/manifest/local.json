@@ -1,0 +1,38 @@
+#COPY /var/www/tviller-server/configs/local.json
+{
+    "redis": {
+        "host": "localhost",
+        "port": 6379
+    },
+    "mongodb": {
+        "url": "mongodb://localhost:27017/chat",
+        "options": {
+            "server": {
+                "auto_reconnect": true,
+                "poolSize": 10,
+                "socketOptions": {
+                    "connectionTimeoutMS": 500
+                }
+            }
+        }
+    },
+    "log": {
+        "categories": {
+            "default": {
+                "level": "debug"
+            },
+            "server": {
+                "level": "debug"
+            },
+            "monitor": {
+                "level": "debug"
+            },
+            "chat-provider": {
+                "level": "debug"
+            },
+            "program-monitor": {
+                "level": "debug"
+            }
+        }
+    }
+}
