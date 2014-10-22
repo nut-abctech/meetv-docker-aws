@@ -1,11 +1,11 @@
-#COPY /var/www/tviller-server/configs/local.json
+/*COPY /var/www/tviller-server/configs/local.json */
 {
     "redis": {
-        "host": "localhost",
+        "host": "172.17.0.19",
         "port": 6379
     },
     "mongodb": {
-        "url": "mongodb://localhost:27017/chat",
+        "url": "mongodb://172.17.0.22:27017/chat",
         "options": {
             "server": {
                 "auto_reconnect": true,

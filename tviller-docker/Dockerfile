@@ -9,7 +9,7 @@ FROM tutum/debian:wheezy
 MAINTAINER nut@abctech-thailand.com
 
 # Add the application resources URL®
-COPY ./sources.list /etc/apt/
+COPY ./manifest/sources.list /etc/apt/
 RUN apt-get update
 
 # Install basic applications
@@ -24,13 +24,16 @@ RUN npm install pm2 -g --unsafe-perm
 # Install Nginx
 RUN wget http://www.dotdeb.org/dotdeb.gpg -O- |apt-key add - && apt-get update
 RUN apt-get -y --force-yes install nginx
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+COPY ./manifest/tviller-server.conf /etc/nginx/sites-available/
+RUN rm /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/tviller-server.conf /etc/nginx/sites-enabled/tviller-server 
+
 
 WORKDIR /var/www/tviller-server
-COPY ./run.sh /var/www/tviller-server/
-RUN chmod 755 ./run.sh
+COPY ./manifest/run.sh /var/www/tviller-server/
+COPY ./manifest/local.json /var/www/tviller-server/configs/local.json
 
-COPY tviller-server.conf /etc/nginx/sites-available/
-RUN rm /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/tviller-server.conf /etc/nginx/sites-enabled/tviller-server 
+RUN chmod 755 ./run.sh
 
 EXPOSE 8088
 

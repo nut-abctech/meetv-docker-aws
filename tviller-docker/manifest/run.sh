@@ -1,5 +1,9 @@
 #!/bin/bash
 echo "Welcome to tviller server"
-/etc/init.d/nginx start
+
 pm2 start app.json
+/etc/init.d/nginx start
+
+#exit
+exit $?
 
