@@ -1,0 +1,110 @@
+---
+    database:
+        connect_info:
+            - dbi:Pg:dbname=tvguide;host=localhost;port=5432
+            - tvguide
+            - tvguide
+            - pg_enable_utf8: 1
+
+    entity_database:
+        connect_info:
+            dsn: dbi:Pg:dbname=tvguide;host=localhost;port=5432
+#            dsn: dbi:SQLite:/tmp/entity_db
+            extra_args:
+                user: tvguide
+                password: tvguide
+    web_service:
+#        root_url: http://kua.ws.tv.startsiden.no/
+#        root_url: http://ws.tv.startsiden.no/
+#        root_url: http://dev.ws.meetv.no/
+        root_url: http://localhost:3001/
+#        root_url: http://admin@fisk12:dev.ws.tv.startsiden.no/
+    xapian:
+        database_root: /home/docker/docker_data/xapian/events
+        backend: chert
+    xapian_entity:
+        database_root: /home/docker/docker_data/xapian/entities
+        backend: chert
+    xapian_channel:
+        backend: chert
+        database_root: /home/docker/docker_data/xapian/channels
+    log4perl:
+        main: |
+            log4perl.rootLogger = TRACE, Screen, Log
+            log4perl.appender.Log = Log::Dispatch::File
+            log4perl.appender.Log.filename = /home/docker/vagrant_data/log/tvguide.log
+            log4perl.appender.Log.utf8 = 1
+            log4perl.appender.Log.binmode = :utf8
+            log4perl.appender.Log.mode = append
+            log4perl.appender.Log.layout = Log::Log4perl::Layout::PatternLayout
+            log4perl.appender.Log.layout.ConversionPattern = %d %c %p> %m %n
+            log4perl.appender.Screen = Log::Dispatch::Screen
+            log4perl.appender.Screen.utf8 = 1
+            log4perl.appender.Screen.layout = Log::Log4perl::Layout::SimpleLayout
+
+        table: |
+            log4perl.category.MeeTV::Xapian::App::Command::event_import = INFO, TableLogger
+            log4perl.category.MeeTV::Xapian::EventIndexer = INFO, TableLogger
+            log4perl.category.MeeTV::Import = INFO, TableLogger
+            log4perl.appender.TableLogger = Log::Log4perl::Appender::DBI
+            log4perl.appender.TableLogger.sql = INSERT INTO log_item ( loglevel,category, ts,message) VALUES (?,?,?,?)
+            log4perl.appender.TableLogger.params.1 = %p
+            log4perl.appender.TableLogger.params.2 = %c
+            log4perl.appender.TableLogger.params.3 = %d
+            log4perl.appender.TableLogger.layout = Log::Log4perl::Layout::NoopLayout
+            log4perl.appender.TableLogger.warp_message = 0
+            log4perl.appender.TableLogger.usePreparedStmt = 1
+        table_credentials: |
+            log4perl.appender.TableLogger.datasource= dbi:Pg:dbname=tvguide;host=localhost;port=5432
+            log4perl.appender.TableLogger.username= tvguide
+            log4perl.appender.TableLogger.password= tvguide
+    event_collision_email_recipients: vonheim@localhost
+    web_base_url: 'http://ss.localhost:3000'
+    image_repository_root_url: http://cd-no.localhost:3000/image_repository
+    static_image_server_root_url: http://192.168.51.231:5000
+#    static_image_server_root_url: http://dev.static.meetv.no
+    static_dir:  /tmp
+
+    web5:
+        static_image_server_root_url:
+            #http: http://static.meetv.no
+            http: http://192.168.51.231:5000
+        secret: 'b1tzhnatz'
+        mode: development
+        hosts:
+            www.meetv.no: me-no
+            www.meetv.dk: me-dk
+            www.meetv.se: me-no
+            localhost: me-no
+            "10.3.3.54": me-no
+            dev-zdk2: me-no
+            "192.168.51.231": me-no
+        api_key: 68949a76-43b9-a1df-8fc2-0a2170ad4e29
+        default_site: me-no
+        email: ['IO']
+    import:
+      sources:
+        Universum:
+          import_dir: /home/vagrant/vagrant_data/uepg/universum-epg-xml
+          rename: 0
+    sponge:
+      sources:
+        unified:
+           class: MeeTV::Sponge::Source::Local::ElasticSearch
+           config:
+             connect_info:
+               servers:
+#                 - elastic1.startsiden.no:9200
+#                 - dev-elastic.startsiden.dev:9200
+                 #- localhost:9200
+                 #- 192.168.51.122:9200
+                  - 192.168.51.231:2200
+               transport: httplite
+        TheMovieDB:
+          class: MeeTV::Sponge::Source::External::TheMovieDB
+          config:
+            types:
+              - movie
+            chi_config:
+              driver: File
+              root_dir: /home/vagrant/vagrant_data/spouge-themoviedb.cache
